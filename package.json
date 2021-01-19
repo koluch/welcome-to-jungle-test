@@ -1,0 +1,78 @@
+{
+  "name": "welcome-to-jungle-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "all": "npx run-s -l",
+    "build:webpack": "webpack --config webpack.config.js",
+    "build": "npm run all build:*",
+    "test:lint": "eslint src/",
+    "test:types": "tsc --noEmit",
+    "test": "npm run all test:*",
+    "start": "NODE_ENV=development webpack serve",
+    "util:prettify": "npx prettier './src/**/*.{ts,tsx}' --write",
+    "util:lint-n-fix": "npx eslint --fix ./src/"
+  },
+  "author": "Nikolai Mavrenkov",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@redux-saga/types": "^1.1.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-redux": "^7.1.15",
+    "@types/react-router-dom": "^5.1.7",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
+    "dotenv-defaults": "^2.0.1",
+    "dotenv-webpack": "^6.0.0",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "file-loader": "^6.2.0",
+    "fs-extra": "^9.1.0",
+    "html-webpack-plugin": "^4.5.1",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.3",
+    "mini-css-extract-plugin": "^1.3.4",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "sass-loader": "^10.1.1",
+    "style-loader": "^2.0.0",
+    "ts-loader": "^8.0.14",
+    "typescript": "^4.1.3",
+    "webpack": "^5.16.0",
+    "webpack-cli": "^4.4.0",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
+    "clsx": "^1.1.1",
+    "date-fns": "^2.16.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.2.0",
+    "redux-saga": "^1.1.3",
+    "sass": "^1.32.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts?(x)": [
+      "npx prettier --write",
+      "npx eslint --fix"
+    ]
+  }
+}
