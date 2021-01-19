@@ -1,14 +1,17 @@
 import { createTheme, WuiProvider } from "@welcome-ui/core";
 import React from "react";
 import { render } from "react-dom";
+import { BrowserRouter } from "react-router-dom";
 
-import App from "./App";
+import App from "./components/App";
 
 const theme = createTheme({});
 
 render(
-  <WuiProvider theme={theme} hasGlobalStyle useReset>
-    <App />
-  </WuiProvider>,
+  <BrowserRouter>
+    <WuiProvider theme={theme} hasGlobalStyle useReset>
+      <App />
+    </WuiProvider>
+  </BrowserRouter>,
   document.getElementById("root")
 );
