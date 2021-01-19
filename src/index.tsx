@@ -1,6 +1,14 @@
+import { createTheme, WuiProvider } from "@welcome-ui/core";
 import React from "react";
 import { render } from "react-dom";
 
 import App from "./App";
 
-render(<App />, document.getElementById("root"));
+const theme = createTheme({});
+
+render(
+  <WuiProvider theme={theme} hasGlobalStyle useReset>
+    <App />
+  </WuiProvider>,
+  document.getElementById("root")
+);
