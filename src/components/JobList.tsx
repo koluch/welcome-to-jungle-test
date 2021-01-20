@@ -4,8 +4,24 @@ import { InputText } from "@welcome-ui/input-text";
 import { Select } from "@welcome-ui/select";
 import { Text } from "@welcome-ui/text";
 import React from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 import JobListItem from "./JobListItem";
+import JobShow from "./JobShow";
+
+function JobModal() {
+  const history = useHistory();
+  const jobRouteMatch = useRouteMatch("/show/:id");
+  const isJobOpen = jobRouteMatch != null;
+  return (
+    <JobShow
+      isOpen={isJobOpen}
+      onClose={() => {
+        history.replace("/");
+      }}
+    />
+  );
+}
 
 export default function JobList(): JSX.Element {
   return (
@@ -39,6 +55,7 @@ export default function JobList(): JSX.Element {
         <JobListItem />
         <JobListItem />
       </Box>
+      <JobModal />
     </Box>
   );
 }

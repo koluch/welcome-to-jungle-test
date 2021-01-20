@@ -21,7 +21,7 @@ export default function JobListItem(): JSX.Element {
             Contract Type - Office Name
           </Text>
         </Box>
-        <Link to={"/show/42"} style={{ textDecoration: "none" }}>
+        <Link to={"/show/42"} replace style={{ textDecoration: "none" }}>
           <Button>See more</Button>
         </Link>
       </Card.Body>

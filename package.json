@@ -61,6 +61,7 @@
     "@welcome-ui/core": "^2.8.1",
     "@welcome-ui/date-picker": "^2.6.3",
     "@welcome-ui/input-text": "^2.6.1",
+    "@welcome-ui/modal": "^2.6.1",
     "@welcome-ui/select": "^2.6.1",
     "@welcome-ui/text": "^2.0.2",
     "@xstyled/styled-components": "^2.2.0",
