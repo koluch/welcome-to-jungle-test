@@ -39,12 +39,14 @@ export default function SearchForm(props: Props): JSX.Element {
       gap={8}
     >
       <InputText
+        isClearable
         placeholder="Your dream job?"
         value={params.text}
-        onChange={(e: React.KeyboardEvent<HTMLInputElement>) => {
+        onChange={(e: { target: { value: string | undefined } }) => {
+          const value = e.target.value;
           onSearch({
             ...params,
-            text: e.currentTarget.value,
+            text: value != null ? value : "",
           });
         }}
       />
@@ -77,17 +79,17 @@ export default function SearchForm(props: Props): JSX.Element {
         />
       </Box>
       <Select
+        isClearable
         placeholder="Group by"
         options={[
-          { value: "NONE", label: "None" },
           { value: "OFFICE", label: "Office" },
           { value: "DEPARTMENT", label: "Department" },
         ]}
-        value={params.grouping}
-        onChange={(value: string) => {
+        value={params.grouping === "NONE" ? undefined : params.grouping}
+        onChange={(value: string | undefined) => {
           onSearch({
             ...params,
-            grouping: value as SearchGroping,
+            grouping: value == null ? "NONE" : (value as SearchGroping),
           });
         }}
       />

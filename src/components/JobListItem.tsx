@@ -18,12 +18,22 @@ function highlight(value: string, matches: MatchIndexes[]): React.ReactNode {
   for (let i = 0; i < matches.length; i += 1) {
     const match = matches[i];
     const prevMatchEnd = i > 0 ? matches[i - 1][1] : 0;
-    result.push(value.substring(prevMatchEnd, match[0]));
     result.push(
-      <x.span color="warning.500">{value.substring(match[0], match[1])}</x.span>
+      <React.Fragment key={`before_${i}`}>
+        {value.substring(prevMatchEnd, match[0])}
+      </React.Fragment>
+    );
+    result.push(
+      <x.span color="warning.500" key={i}>
+        {value.substring(match[0], match[1])}
+      </x.span>
     );
     if (i === matches.length - 1) {
-      result.push(value.substring(match[1]));
+      result.push(
+        <React.Fragment key={`after_${i}`}>
+          {value.substring(match[1])}
+        </React.Fragment>
+      );
     }
   }
   return result;
