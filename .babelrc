@@ -4,8 +4,9 @@
     [
       "@babel/env",
       {
-        "modules": false,
-        "targets": "last 2 versions"
+        "targets": {
+          "browsers": "last 2 years"
+        }
       }
     ]
   ]
