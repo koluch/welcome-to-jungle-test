@@ -1,4 +1,5 @@
 import DOMPurify from "dompurify";
+import { either } from "fp-ts/Either";
 import * as t from "io-ts";
 
 export const ApiLanguageCodec = t.union([
@@ -53,6 +54,18 @@ export const ApiUnsafeHtmlStringCodec = new t.Type<
 
 export const ApiUrlCodec = t.string;
 
+export const ApiDateCodec = new t.Type<Date, string, unknown>(
+  "ApiDate",
+  (value): value is Date => value instanceof Date,
+  (value: unknown, context) => {
+    return either.chain(t.string.validate(value, context), (s) => {
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? t.failure(value, context) : t.success(d);
+    });
+  },
+  (str) => str.toISOString()
+);
+
 export const ApiOfficeCodec = t.interface({
   id: t.number,
   address: t.string,
@@ -63,13 +76,20 @@ export const ApiOfficeCodec = t.interface({
   zip_code: t.string,
 });
 
+export const ApiDepartmentCodec = t.interface({
+  id: t.number,
+  name: t.string,
+});
+
 export const ApiJobCodec = t.interface({
   id: t.number,
   name: t.string,
   contract_type: ApiLocalizedStringCodec,
   office: ApiOfficeCodec,
+  department: ApiDepartmentCodec,
   description: ApiUnsafeHtmlStringCodec,
   recruitment_process: ApiUnsafeHtmlStringCodec,
+  published_at: ApiDateCodec,
 });
 
 export const ApiWebsiteCodec = t.interface({
