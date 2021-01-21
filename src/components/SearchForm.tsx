@@ -33,11 +33,10 @@ export default function SearchForm(props: Props): JSX.Element {
 
   return (
     <Box
-      display="flex"
-      spaceX={{ _: 0, sm: 8 }}
-      spaceY={{ _: 8, sm: 0 }}
-      flexDirection={{ _: "column", sm: "row" }}
-      alignItems={{ _: "stretch", sm: "center" }}
+      display="grid"
+      gridAutoFlow={{ _: "row", sm: "column" }}
+      gridAutoColumns="1fr"
+      gap={8}
     >
       <InputText
         placeholder="Your dream job?"
@@ -50,6 +49,7 @@ export default function SearchForm(props: Props): JSX.Element {
         }}
       />
       <Select
+        isClearable
         placeholder="Contract type"
         options={availableContractTypes.map((jobType) => ({
           value: jobType,
@@ -63,17 +63,19 @@ export default function SearchForm(props: Props): JSX.Element {
           });
         }}
       />
-      <DatePicker
-        placeholder="Published after"
-        inputRef={React.createRef()}
-        value={0}
-        onChange={(date: Date | undefined) => {
-          onSearch({
-            ...params,
-            publishedAfter: date || null,
-          });
-        }}
-      />
+      <Box>
+        <DatePicker
+          placeholder="Published after"
+          inputRef={React.createRef()}
+          value={0}
+          onChange={(date: Date | undefined) => {
+            onSearch({
+              ...params,
+              publishedAfter: date || null,
+            });
+          }}
+        />
+      </Box>
       <Select
         placeholder="Group by"
         options={[
