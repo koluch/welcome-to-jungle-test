@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.0",
+    "@welcome-ui/alert": "^2.1.3",
     "@welcome-ui/box": "^2.0.2",
     "@welcome-ui/button": "^2.0.2",
     "@welcome-ui/card": "^2.0.2",

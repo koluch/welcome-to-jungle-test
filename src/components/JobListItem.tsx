@@ -5,7 +5,16 @@ import { Text } from "@welcome-ui/text";
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function JobListItem(): JSX.Element {
+import { useStringLocalization } from "../api/helpers";
+import { ApiJob } from "../api/types";
+
+interface Props {
+  job: ApiJob;
+}
+
+export default function JobListItem(props: Props): JSX.Element {
+  const { job } = props;
+  const localString = useStringLocalization();
   return (
     <Card lineHeight="2">
       <Card.Body
@@ -16,12 +25,12 @@ export default function JobListItem(): JSX.Element {
         flexDirection={{ _: "column", sm: "row" }}
       >
         <Box spaceY={{ _: 4 }}>
-          <Text variant="h5">Job Name</Text>
+          <Text variant="h5">{job.name}</Text>
           <Text variant="body4" color="light.200">
-            Contract Type - Office Name
+            {localString(job.contract_type)} - {job.office.name}
           </Text>
         </Box>
-        <Link to={"/show/42"} replace style={{ textDecoration: "none" }}>
+        <Link to={`/show/${job.id}`} replace style={{ textDecoration: "none" }}>
           <Button>See more</Button>
         </Link>
       </Card.Body>

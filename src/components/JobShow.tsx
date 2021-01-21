@@ -3,13 +3,16 @@ import { Button } from "@welcome-ui/button";
 import { Modal, useModalState } from "@welcome-ui/modal";
 import React, { useEffect } from "react";
 
+import { ApiJob } from "../api/types";
+
 interface Props {
-  isOpen: boolean;
+  job: ApiJob | null;
   onClose: () => void;
 }
 
 export default function JobShow(props: Props): JSX.Element {
-  const { isOpen, onClose } = props;
+  const { job, onClose } = props;
+  const isOpen = job != null;
   const modal = useModalState({ visible: isOpen });
   useEffect(() => {
     if (isOpen) {
@@ -20,13 +23,17 @@ export default function JobShow(props: Props): JSX.Element {
   }, [modal, isOpen]);
   return (
     <Modal {...modal} ariaLabel="Job details" onClose={onClose}>
-      <Modal.Title>(Job description)</Modal.Title>
-      <Modal.Content>(Job details)</Modal.Content>
-      <Modal.Footer>
-        <Box width={1} display="flex" justifyContent="center">
-          <Button>Apply</Button>
-        </Box>
-      </Modal.Footer>
+      {job != null && (
+        <>
+          <Modal.Title>{job.name}</Modal.Title>
+          <Modal.Content>(Job details)</Modal.Content>
+          <Modal.Footer>
+            <Box width={1} display="flex" justifyContent="center">
+              <Button>Apply</Button>
+            </Box>
+          </Modal.Footer>
+        </>
+      )}
     </Modal>
   );
 }
