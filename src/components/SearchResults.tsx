@@ -5,7 +5,11 @@ import React from "react";
 
 import { ApiJob } from "../api/types";
 import { AsyncResource, match } from "../helpers/asyncResource";
-import { SearchResult, SearchResultsGroup } from "../helpers/searching";
+import {
+  SearchResult,
+  SearchResultsGroup,
+  WithMatches,
+} from "../helpers/searching";
 
 import JobListItem from "./JobListItem";
 
@@ -67,12 +71,12 @@ function Group(props: { group: SearchResultsGroup }) {
   );
 }
 
-function List(props: { jobs: ApiJob[] }) {
+function List(props: { jobs: WithMatches<ApiJob>[] }) {
   const { jobs } = props;
   return (
     <Box spaceY={8}>
       {jobs.map((job) => (
-        <JobListItem key={job.id} job={job} />
+        <JobListItem key={job.item.id} job={job} />
       ))}
     </Box>
   );

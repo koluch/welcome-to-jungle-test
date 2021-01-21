@@ -23,13 +23,13 @@ export const DEFAULT_PARAMS: SearchParams = {
 
 export interface SearchResultsGroup {
   title: string;
-  jobs: ApiJob[];
+  jobs: WithMatches<ApiJob>[];
 }
 
 export type SearchResult =
   | {
       kind: "UNGROUPED";
-      jobs: ApiJob[];
+      jobs: WithMatches<ApiJob>[];
     }
   | {
       kind: "GROUPED";
@@ -49,14 +49,19 @@ function getJobGroup(job: ApiJob, grouping: SearchGroping): string {
 const options = {
   includeScore: true,
   includeMatches: true,
+  threshold: 0.4,
   keys: [
     {
       name: "name",
       weight: 10,
     },
     {
-      name: "department.name",
+      name: "office.name",
       weight: 5,
+    },
+    {
+      name: "department.name",
+      weight: 2,
     },
     {
       name: "description.safe",
@@ -65,26 +70,47 @@ const options = {
   ],
 };
 
+export type MatchIndexes = [number, number];
+
+export interface WithMatches<T> {
+  item: T;
+  matches: {
+    [key: string]: MatchIndexes[];
+  };
+}
+
 function search(
   jobs: ApiJob[],
   params: SearchParams,
   localString: StringLocalization
-) {
-  let result: ApiJob[] = jobs;
-
+): WithMatches<ApiJob>[] {
+  let result: WithMatches<ApiJob>[];
   if (params.text !== "") {
-    const fuse = new Fuse(result, options);
+    const fuse = new Fuse(jobs, options);
     const fuseResults = fuse.search(params.text);
-    result = fuseResults.map((x) => x.item);
+    result = fuseResults.map(({ item, matches }) => {
+      const resultMatches: { [key: string]: MatchIndexes[] } = {};
+      for (const match of matches || []) {
+        if (match.key != null) {
+          resultMatches[match.key] = match.indices.map(([x, y]) => [x, y + 1]);
+        }
+      }
+      return {
+        item: item,
+        matches: resultMatches,
+      };
+    });
+  } else {
+    result = jobs.map((job) => ({ item: job, matches: {} }));
   }
 
   result = result.filter((job) => {
     let include = true;
     if (include && params.jobType != null) {
-      include = localString(job.contract_type) === params.jobType;
+      include = localString(job.item.contract_type) === params.jobType;
     }
     if (include && params.publishedAfter != null) {
-      include = job.published_at > params.publishedAfter;
+      include = job.item.published_at > params.publishedAfter;
     }
     return include;
   });
@@ -92,10 +118,13 @@ function search(
   return result;
 }
 
-function group(jobs: ApiJob[], params: SearchParams): SearchResultsGroup[] {
+function group(
+  jobs: WithMatches<ApiJob>[],
+  params: SearchParams
+): SearchResultsGroup[] {
   const groups: { [key: string]: SearchResultsGroup } = {};
   for (const job of jobs) {
-    const group = getJobGroup(job, params.grouping);
+    const group = getJobGroup(job.item, params.grouping);
     if (groups[group] == null) {
       groups[group] = {
         title: group,

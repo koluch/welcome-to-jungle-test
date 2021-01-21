@@ -18,7 +18,7 @@ const GlobalStyle = createGlobalStyle`
     line-height: 1.2;
     display: block;
     
-    p, ul, ol {
+    p, ul, ol, h1, h2, h3, h4, h5, h6 {
       &:not(:first-child) {
         margin-top: 1rem;
       }
