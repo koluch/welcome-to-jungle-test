@@ -30,9 +30,9 @@ export default function JobListItem(props: Props): JSX.Element {
             {localString(job.contract_type)} - {job.office.name}
           </Text>
         </Box>
-        <Link to={`/show/${job.id}`} replace style={{ textDecoration: "none" }}>
-          <Button>See more</Button>
-        </Link>
+        <Button as={Link} to={`/show/${job.id}`} replace>
+          See more
+        </Button>
       </Card.Body>
     </Card>
   );

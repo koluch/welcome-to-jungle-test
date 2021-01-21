@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 import { fetchData } from "../api";
-import { ApiData } from "../api/types";
+import { ApiData, ApiJob } from "../api/types";
 import * as ar from "../helpers/asyncResource";
 import { isSuccess } from "../helpers/asyncResource";
 
@@ -50,15 +50,35 @@ function App(): JSX.Element {
   const history = useHistory();
 
   const dataRes = useData();
-  const jobRouteMatch = useRouteMatch<{ id: string }>("/show/:id");
-  const jobOpen =
-    (jobRouteMatch != null &&
-      isSuccess(dataRes) &&
-      jobRouteMatch.params.id != null &&
-      dataRes.value.jobs.find(
-        ({ id }) => id === parseInt(jobRouteMatch.params.id)
-      )) ||
-    null;
+
+  const jobsRes = ar.map(dataRes, (data) => data.jobs);
+  const applyUrlRes = ar.map(dataRes, (data) => {
+    const website = data.websites.find(
+      ({ reference }) => reference === "wttj_fr"
+    );
+    return website != null ? website.root_url : null;
+  });
+
+  const openJobMatch = useRouteMatch<{ id: string }>("/show/:id");
+  const openJobRes: ar.AsyncResource<ApiJob | null> = ar.match(jobsRes, {
+    init: () => ar.init(),
+    loading: () => ar.loading(),
+    failed: (message) => ar.failed(message),
+    success: (jobs) => {
+      if (openJobMatch == null) {
+        return ar.success(null);
+      }
+      const jobId = openJobMatch.params.id;
+      if (jobId == null) {
+        return ar.failed("Id url parameter can not be null");
+      }
+      const findJob = jobs.find(({ id }) => id === parseInt(jobId));
+      if (findJob == null) {
+        return ar.failed(`Unable to find job by id ${jobId}`);
+      }
+      return ar.success(findJob);
+    },
+  });
 
   return (
     <>
@@ -90,7 +110,9 @@ function App(): JSX.Element {
         </Box>
       </Box>
       <JobShow
-        job={jobOpen}
+        applyUrl={isSuccess(applyUrlRes) ? applyUrlRes.value : null}
+        isOpen={openJobMatch != null}
+        jobRes={openJobRes}
         onClose={() => {
           history.replace("/");
         }}
