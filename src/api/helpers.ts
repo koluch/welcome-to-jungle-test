@@ -5,7 +5,9 @@ import { useCurrentLanguage } from "../helpers/hooks";
 import { DEFAULT_LANGUAGE } from "./constants";
 import { ApiLocalizedString } from "./types";
 
-type StringLocalization = (localizedString: ApiLocalizedString) => string;
+export type StringLocalization = (
+  localizedString: ApiLocalizedString
+) => string;
 
 export function useStringLocalization(): StringLocalization {
   const lang = useCurrentLanguage();

@@ -4,9 +4,33 @@ import { InputText } from "@welcome-ui/input-text";
 import { Select } from "@welcome-ui/select";
 import React from "react";
 
-interface Props {}
+import { useStringLocalization } from "../api/helpers";
+import { ApiJob } from "../api/types";
+import { AsyncResource, isSuccess } from "../helpers/asyncResource";
+import { SearchGroping, SearchParams } from "../helpers/searching";
 
-export default function SearchForm(_props: Props): JSX.Element {
+interface Props {
+  availableJobsRes: AsyncResource<ApiJob[]>;
+  params: SearchParams;
+  onSearch: (newParams: SearchParams) => void;
+}
+
+export default function SearchForm(props: Props): JSX.Element {
+  const { availableJobsRes, params, onSearch } = props;
+
+  const localString = useStringLocalization();
+
+  // todo: optimize
+  const availableContractTypes: string[] = [];
+  if (isSuccess(availableJobsRes)) {
+    for (const job of availableJobsRes.value) {
+      const jobType = localString(job.contract_type);
+      if (availableContractTypes.indexOf(jobType) === -1) {
+        availableContractTypes.push(jobType);
+      }
+    }
+  }
+
   return (
     <Box
       display="flex"
@@ -15,10 +39,56 @@ export default function SearchForm(_props: Props): JSX.Element {
       flexDirection={{ _: "column", sm: "row" }}
       alignItems={{ _: "stretch", sm: "center" }}
     >
-      <InputText placeholder="Your dream job?" />
-      <Select placeholder="Contract type" options={[]} value="" />
-      <DatePicker placeholder="Published after" />
-      <Select placeholder="Group by" options={[]} value="" />
+      <InputText
+        placeholder="Your dream job?"
+        value={params.text}
+        onChange={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          onSearch({
+            ...params,
+            text: e.currentTarget.value,
+          });
+        }}
+      />
+      <Select
+        placeholder="Contract type"
+        options={availableContractTypes.map((jobType) => ({
+          value: jobType,
+          label: jobType,
+        }))}
+        value={params.jobType}
+        onChange={(value: string) => {
+          onSearch({
+            ...params,
+            jobType: value,
+          });
+        }}
+      />
+      <DatePicker
+        placeholder="Published after"
+        inputRef={React.createRef()}
+        value={0}
+        onChange={(date: Date | undefined) => {
+          onSearch({
+            ...params,
+            publishedAfter: date || null,
+          });
+        }}
+      />
+      <Select
+        placeholder="Group by"
+        options={[
+          { value: "NONE", label: "None" },
+          { value: "OFFICE", label: "Office" },
+          { value: "DEPARTMENT", label: "Department" },
+        ]}
+        value={params.grouping}
+        onChange={(value: string) => {
+          onSearch({
+            ...params,
+            grouping: value as SearchGroping,
+          });
+        }}
+      />
     </Box>
   );
 }

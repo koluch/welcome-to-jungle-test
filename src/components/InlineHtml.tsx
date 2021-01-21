@@ -52,7 +52,7 @@ export default function InlineHtml(props: Props): JSX.Element {
     <>
       <GlobalStyle />
       <div
-        className="InnerHtml"
+        className="InlineHtml"
         dangerouslySetInnerHTML={{ __html: html.safe }}
       />
     </>

@@ -8,10 +8,15 @@ import { fetchData } from "../api";
 import { ApiData, ApiJob } from "../api/types";
 import * as ar from "../helpers/asyncResource";
 import { isSuccess } from "../helpers/asyncResource";
+import {
+  DEFAULT_PARAMS,
+  SearchParams,
+  useSearchResults,
+} from "../helpers/searching";
 
-import JobList from "./JobList";
 import JobShow from "./JobShow";
 import SearchForm from "./SearchForm";
+import SearchResults from "./SearchResults";
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -80,18 +85,23 @@ function App(): JSX.Element {
     },
   });
 
+  const [searchParams, setSearchParams] = useState<SearchParams>(
+    DEFAULT_PARAMS
+  );
+
+  const searchResultsRes = useSearchResults(jobsRes, searchParams);
+
   return (
     <>
       <GlobalStyle />
       <Box
         display="flex"
-        width={1}
+        w="100vw"
         flex="1"
-        justifyContent="center"
-        alignItems="flex-start"
+        flexDirection="column"
+        alignItems={{ _: "stretch", sm: "center" }}
         backgroundColor="nude.100"
-        paddingTop={{ _: 0, sm: 32 }}
-        paddingBottom={{ _: 0, sm: 32 }}
+        padding={{ _: 0, sm: 32 }}
       >
         <Box
           backgroundColor="light.900"
@@ -100,13 +110,18 @@ function App(): JSX.Element {
           boxShadow="sm"
           display="flex"
           flexDirection="column"
+          maxWidth="920px"
           spaceY={20}
         >
           <Text variant="h2" textAlign={{ _: "left", sm: "center" }}>
             Our offers
           </Text>
-          <SearchForm />
-          <JobList jobListRes={ar.map(dataRes, (data) => data.jobs)} />
+          <SearchForm
+            availableJobsRes={jobsRes}
+            params={searchParams}
+            onSearch={setSearchParams}
+          />
+          <SearchResults searchResultsRes={searchResultsRes} />
         </Box>
       </Box>
       <JobShow
