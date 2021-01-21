@@ -1,7 +1,8 @@
 import axios from "axios";
 import { isRight } from "fp-ts/lib/Either";
 
-import { ApiData, ApiDataCodec } from "./codecs";
+import { ApiDataCodec } from "./codecs";
+import { ApiData } from "./types";
 
 export async function fetchData(): Promise<ApiData> {
   const url = process.env.API_URL as string;
