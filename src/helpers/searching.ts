@@ -1,3 +1,5 @@
+import Fuse from "fuse.js";
+
 import { StringLocalization, useStringLocalization } from "../api/helpers";
 import { ApiJob } from "../api/types";
 
@@ -44,17 +46,40 @@ function getJobGroup(job: ApiJob, grouping: SearchGroping): string {
   return "No group";
 }
 
+const options = {
+  includeScore: true,
+  includeMatches: true,
+  keys: [
+    {
+      name: "name",
+      weight: 10,
+    },
+    {
+      name: "department.name",
+      weight: 5,
+    },
+    {
+      name: "description.safe",
+      weight: 1,
+    },
+  ],
+};
+
 function search(
   jobs: ApiJob[],
   params: SearchParams,
   localString: StringLocalization
 ) {
-  return jobs.filter((job) => {
+  let result: ApiJob[] = jobs;
+
+  if (params.text !== "") {
+    const fuse = new Fuse(result, options);
+    const fuseResults = fuse.search(params.text);
+    result = fuseResults.map((x) => x.item);
+  }
+
+  result = result.filter((job) => {
     let include = true;
-    if (params.text !== "") {
-      include =
-        job.name.toLowerCase().indexOf(params.text.trim().toLowerCase()) != -1;
-    }
     if (include && params.jobType != null) {
       include = localString(job.contract_type) === params.jobType;
     }
@@ -63,6 +88,8 @@ function search(
     }
     return include;
   });
+
+  return result;
 }
 
 function group(jobs: ApiJob[], params: SearchParams): SearchResultsGroup[] {

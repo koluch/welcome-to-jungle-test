@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "all": "npx run-s -l",
+    "build:clean": "rm -rf dist",
     "build:webpack": "webpack --config webpack.config.js",
     "build": "npm run all build:*",
     "test:lint": "eslint src/",
@@ -74,6 +75,7 @@
     "date-fns": "^2.16.1",
     "dompurify": "^2.2.6",
     "fp-ts": "^2.9.3",
+    "fuse.js": "^6.4.6",
     "io-ts": "^2.2.13",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
