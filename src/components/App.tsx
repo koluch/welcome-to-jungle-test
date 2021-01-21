@@ -1,7 +1,7 @@
 import { Box } from "@welcome-ui/box";
 import { Text } from "@welcome-ui/text";
 import { createGlobalStyle } from "@xstyled/styled-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 import { fetchData } from "../api";
@@ -42,13 +42,15 @@ function useData(): ar.AsyncResource<ApiData> {
         setError(e.message);
       });
   }, []);
-  if (error != null) {
-    return ar.failed(error);
-  }
-  if (data != null) {
-    return ar.success(data);
-  }
-  return ar.loading();
+  return useMemo(() => {
+    if (error != null) {
+      return ar.failed(error);
+    }
+    if (data != null) {
+      return ar.success(data);
+    }
+    return ar.loading();
+  }, [data, error]);
 }
 
 function App(): JSX.Element {
@@ -56,34 +58,38 @@ function App(): JSX.Element {
 
   const dataRes = useData();
 
-  const jobsRes = ar.map(dataRes, (data) => data.jobs);
+  const jobsRes = useMemo(() => {
+    return ar.map(dataRes, (data) => data.jobs);
+  }, [dataRes]);
   const applyUrlRes = ar.map(dataRes, (data) => {
     const website = data.websites.find(
-      ({ reference }) => reference === "wttj_fr"
+      ({ reference }) => reference === process.env.APPLY_URL_REFERENCE_TYPE
     );
     return website != null ? website.root_url : null;
   });
 
   const openJobMatch = useRouteMatch<{ id: string }>("/show/:id");
-  const openJobRes: ar.AsyncResource<ApiJob | null> = ar.match(jobsRes, {
-    init: () => ar.init(),
-    loading: () => ar.loading(),
-    failed: (message) => ar.failed(message),
-    success: (jobs) => {
-      if (openJobMatch == null) {
-        return ar.success(null);
-      }
-      const jobId = openJobMatch.params.id;
-      if (jobId == null) {
-        return ar.failed("Id url parameter can not be null");
-      }
-      const findJob = jobs.find(({ id }) => id === parseInt(jobId));
-      if (findJob == null) {
-        return ar.failed(`Unable to find job by id ${jobId}`);
-      }
-      return ar.success(findJob);
-    },
-  });
+  const openJobRes: ar.AsyncResource<ApiJob | null> = useMemo(() => {
+    return ar.match(jobsRes, {
+      init: () => ar.init(),
+      loading: () => ar.loading(),
+      failed: (message) => ar.failed(message),
+      success: (jobs) => {
+        if (openJobMatch == null) {
+          return ar.success(null);
+        }
+        const jobId = openJobMatch.params.id;
+        if (jobId == null) {
+          return ar.failed("Id url parameter can not be null");
+        }
+        const findJob = jobs.find(({ id }) => id === parseInt(jobId));
+        if (findJob == null) {
+          return ar.failed(`Unable to find job by id ${jobId}`);
+        }
+        return ar.success(findJob);
+      },
+    });
+  }, [openJobMatch, jobsRes]);
 
   const [searchParams, setSearchParams] = useState<SearchParams>(
     DEFAULT_PARAMS

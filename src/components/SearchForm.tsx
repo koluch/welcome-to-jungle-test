@@ -2,7 +2,7 @@ import { Box } from "@welcome-ui/box";
 import { DatePicker } from "@welcome-ui/date-picker";
 import { InputText } from "@welcome-ui/input-text";
 import { Select } from "@welcome-ui/select";
-import React from "react";
+import React, { useMemo } from "react";
 
 import { useStringLocalization } from "../api/helpers";
 import { ApiJob } from "../api/types";
@@ -20,16 +20,18 @@ export default function SearchForm(props: Props): JSX.Element {
 
   const localString = useStringLocalization();
 
-  // todo: optimize
-  const availableContractTypes: string[] = [];
-  if (isSuccess(availableJobsRes)) {
-    for (const job of availableJobsRes.value) {
-      const jobType = localString(job.contract_type);
-      if (availableContractTypes.indexOf(jobType) === -1) {
-        availableContractTypes.push(jobType);
+  const availableContractTypes: string[] = useMemo(() => {
+    const result: string[] = [];
+    if (isSuccess(availableJobsRes)) {
+      for (const job of availableJobsRes.value) {
+        const jobType = localString(job.contract_type);
+        if (result.indexOf(jobType) === -1) {
+          result.push(jobType);
+        }
       }
     }
-  }
+    return result;
+  }, [localString, availableJobsRes]);
 
   return (
     <Box
