@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "all": "npx run-s -l",
+    "all": "npm-run-all -s -l",
+    "parallel": "npm-run-all -p -l",
     "build:clean": "rm -rf dist",
     "build:webpack": "webpack --config webpack.config.js",
     "build": "npm run all build:*",
     "test:jest": "jest '.*\\.test\\.jsx?'",
     "test:lint": "eslint src/",
     "test:types": "tsc --noEmit",
-    "test": "npm run all test:*",
+    "test": "npm run parallel test:*",
     "start": "NODE_ENV=development webpack serve",
     "util:prettify": "npx prettier './src/**/*.{ts,tsx}' --write",
     "util:lint-n-fix": "npx eslint --fix ./src/"

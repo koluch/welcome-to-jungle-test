@@ -39,6 +39,7 @@ export default function SearchForm(props: Props): JSX.Element {
       gridAutoFlow={{ _: "row", sm: "column" }}
       gridAutoColumns="1fr"
       gap={8}
+      data-testid="SearchForm"
     >
       <InputText
         isClearable

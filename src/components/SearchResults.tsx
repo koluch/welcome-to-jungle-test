@@ -25,7 +25,7 @@ export default function SearchResults(props: Props): JSX.Element {
       <Text variant="h5">Loading list of available offers...</Text>
     ),
     success: (searchResults) => (
-      <Box>
+      <Box data-testid="SearchResults">
         {searchResults.kind === "UNGROUPED" && (
           <>
             {searchResults.jobs.length === 0 && (
