@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { createTheme, WuiProvider } from "@welcome-ui/core";
 import { defaultTheme } from "@xstyled/styled-components";
 import { createMemoryHistory } from "history";
@@ -8,6 +8,7 @@ import { Router } from "react-router-dom";
 import Root from "../src/components/Root";
 import { success } from "../src/helpers/asyncResource";
 
+import { render } from "./utils";
 import MockData from "./data";
 
 const wuiTheme = createTheme({
@@ -15,18 +16,8 @@ const wuiTheme = createTheme({
 });
 
 it("can render and show search form and results list", () => {
-  const history = createMemoryHistory();
-
   // Test first render and componentDidMount
-  render(
-    <Router history={history}>
-      <WuiProvider theme={wuiTheme}>
-        <>
-          <Root dataRes={success(MockData)} />
-        </>
-      </WuiProvider>
-    </Router>
-  );
+  render(<Root dataRes={success(MockData)} />);
 
   expect(screen.getByTestId("SearchForm")).toBeTruthy();
   expect(screen.getByTestId("SearchResults")).toBeTruthy();

@@ -22,7 +22,9 @@ export default function SearchResults(props: Props): JSX.Element {
   return match(searchResultsRes, {
     init: () => <></>,
     loading: () => (
-      <Text variant="h5">Loading list of available offers...</Text>
+      <Text variant="h5" data-testid="SearchResults__loading">
+        Loading list of available offers...
+      </Text>
     ),
     success: (searchResults) => (
       <Box data-testid="SearchResults">
@@ -51,9 +53,9 @@ export default function SearchResults(props: Props): JSX.Element {
       </Box>
     ),
     failed: (message) => (
-      <Alert>
+      <Alert data-testid="SearchResults__failed">
         <Alert.Title>Unable to load list of available offers</Alert.Title>
-        <span>{message}</span>
+        <span data-testid="SearchResults__failedMessage">{message}</span>
       </Alert>
     ),
   });
@@ -74,7 +76,7 @@ function Group(props: { group: SearchResultsGroup }) {
 function List(props: { jobs: WithMatches<ApiJob>[] }) {
   const { jobs } = props;
   return (
-    <Box spaceY={8}>
+    <Box spaceY={8} data-testid="SearchResults__list">
       {jobs.map((job) => (
         <JobListItem key={job.item.id} job={job} />
       ))}

@@ -59,7 +59,7 @@ export default function JobListItem(props: Props): JSX.Element {
         spaceY={{ _: 16, sm: 0 }}
         flexDirection={{ _: "column", sm: "row" }}
       >
-        <Box spaceY={{ _: 4 }}>
+        <Box spaceY={{ _: 4 }} data-testid="JobListItem">
           <Text variant="h5" data-testid="title">
             {highlight(job.name, nameMatches)}
           </Text>
