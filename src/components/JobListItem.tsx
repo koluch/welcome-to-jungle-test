@@ -60,13 +60,20 @@ export default function JobListItem(props: Props): JSX.Element {
         flexDirection={{ _: "column", sm: "row" }}
       >
         <Box spaceY={{ _: 4 }}>
-          <Text variant="h5">{highlight(job.name, nameMatches)}</Text>
+          <Text variant="h5" data-testid="title">
+            {highlight(job.name, nameMatches)}
+          </Text>
           <Text variant="body4" color="light.200">
             {localString(job.contract_type)} -{" "}
             {highlight(job.office.name, officeMatches)}
           </Text>
         </Box>
-        <Button as={Link} to={`/show/${job.id}`} replace>
+        <Button
+          as={Link}
+          to={`/show/${job.id}`}
+          replace
+          data-testid="see-more-button"
+        >
           See more
         </Button>
       </Card.Body>
