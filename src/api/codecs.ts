@@ -54,6 +54,17 @@ export const ApiUnsafeHtmlStringCodec = new t.Type<
 
 export const ApiUrlCodec = t.string;
 
+export const ApiWebsiteCodec = t.interface({
+  kind: t.string,
+  reference: t.string,
+  root_url: ApiUrlCodec,
+});
+
+export const ApiWebsiteReference = t.interface({
+  url: ApiUrlCodec,
+  website_reference: t.string,
+});
+
 export const ApiDateCodec = new t.Type<Date, string, unknown>(
   "ApiDate",
   (value): value is Date => value instanceof Date,
@@ -90,12 +101,7 @@ export const ApiJobCodec = t.interface({
   description: ApiUnsafeHtmlStringCodec,
   recruitment_process: ApiUnsafeHtmlStringCodec,
   published_at: ApiDateCodec,
-});
-
-export const ApiWebsiteCodec = t.interface({
-  kind: t.string,
-  reference: t.string,
-  root_url: ApiUrlCodec,
+  websites_urls: t.array(ApiWebsiteReference),
 });
 
 export const ApiDataCodec = t.interface({

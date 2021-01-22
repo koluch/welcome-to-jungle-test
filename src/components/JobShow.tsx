@@ -13,13 +13,12 @@ import InlineHtml from "./InlineHtml";
 
 interface Props {
   jobRes: AsyncResource<ApiJob | null>;
-  applyUrl: string | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function JobShow(props: Props): JSX.Element {
-  const { applyUrl, jobRes, isOpen, onClose } = props;
+  const { jobRes, isOpen, onClose } = props;
   const modal = useModalState({ visible: isOpen });
   const localString = useStringLocalization();
   useEffect(() => {
@@ -29,6 +28,15 @@ export default function JobShow(props: Props): JSX.Element {
       modal.hide();
     }
   }, [modal, isOpen]);
+
+  const applyUrl =
+    isSuccess(jobRes) && jobRes.value != null
+      ? jobRes.value.websites_urls.find(
+          ({ website_reference }) =>
+            website_reference === process.env.APPLY_URL_REFERENCE_TYPE
+        )
+      : undefined;
+
   return (
     <Modal {...modal} ariaLabel="Job details" onClose={onClose}>
       <>
@@ -74,9 +82,10 @@ export default function JobShow(props: Props): JSX.Element {
           <Box width={1} display="flex" justifyContent="center">
             <Button
               as="a"
-              href={applyUrl}
+              href={applyUrl != null ? applyUrl.url : null}
               target="_blank"
               rel="noopener nofollow"
+              disabled={applyUrl == null}
             >
               Apply
             </Button>

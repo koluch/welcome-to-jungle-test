@@ -7,7 +7,6 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 import { fetchData } from "../api";
 import { ApiData, ApiJob } from "../api/types";
 import * as ar from "../helpers/asyncResource";
-import { isSuccess } from "../helpers/asyncResource";
 import {
   DEFAULT_PARAMS,
   SearchParams,
@@ -61,12 +60,6 @@ function App(): JSX.Element {
   const jobsRes = useMemo(() => {
     return ar.map(dataRes, (data) => data.jobs);
   }, [dataRes]);
-  const applyUrlRes = ar.map(dataRes, (data) => {
-    const website = data.websites.find(
-      ({ reference }) => reference === process.env.APPLY_URL_REFERENCE_TYPE
-    );
-    return website != null ? website.root_url : null;
-  });
 
   const openJobMatch = useRouteMatch<{ id: string }>("/show/:id");
   const openJobRes: ar.AsyncResource<ApiJob | null> = useMemo(() => {
@@ -131,7 +124,6 @@ function App(): JSX.Element {
         </Box>
       </Box>
       <JobShow
-        applyUrl={isSuccess(applyUrlRes) ? applyUrlRes.value : null}
         isOpen={openJobMatch != null}
         jobRes={openJobRes}
         onClose={() => {
